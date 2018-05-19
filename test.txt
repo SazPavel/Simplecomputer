@@ -1,0 +1,5 @@
+10 INPUT A
+20 IF A > 10 GOTO 50
+30 LET B = A + 5 * (1 + 1)
+40 PRINT B
+50 END
