@@ -12,7 +12,7 @@ int code_pos = 0, val_pos = 99, label_pos = 0;
 
 
 
-int find_label(int label)
+int find_label(int label) //Finding matches for Assembly and basic strings
 {
 	int i;
 	
@@ -24,13 +24,14 @@ int find_label(int label)
 }
 
 
+// SAVE TO FILE
 void save_as(FILE *file){
 	int i;
 	int high, low;
 
 	for (i = 0; i < code_pos; i++){
 			
-		if(memory[i].is_val != 1 && memory[i].is_val != 0){
+		if(memory[i].is_val != 1 && memory[i].is_val != 0){//Checks that all jumps have a destination point
 			int j = find_label(memory[i].is_val);
 			if (j < 0) {
 				printf("Label not found!\n");
@@ -98,7 +99,7 @@ void save_as(FILE *file){
 }
 
 
-char *get_label_and_keyw(char *str, int *label, char *keyword)
+char *get_label_and_keyw(char *str, int *label, char *keyword)//reads line number and command
 {
 	int cnt;
 	int i = 0;
@@ -114,7 +115,7 @@ char *get_label_and_keyw(char *str, int *label, char *keyword)
 	return str + i;
 }
 
-int get_command_code(char *str){
+int get_command_code(char *str){//finds the command code
 	
 	if (strcmp(str, "REM") == 0)
 		return KEYW_REM;
@@ -184,41 +185,10 @@ int is_value(char *str){
 }
 
 int char_to_int(char c){
-	switch(c){
-		case 48:{
-			return 0;
-		}		
-		case 49:{
-			return 1;
-		}
-		case 50:{
-			return 2;
-		}
-		case 51:{
-			return 3;
-		}
-		case 52:{
-			return 4;
-		}
-		case 53:{
-			return 5;
-		}
-		case 54:{
-			return 6;
-		}
-		case 55:{
-			return 7;
-		}
-		case 56:{
-			return 8;
-		}
-		case 57:{
-			return 9;
-		}
-	}
-	return -1;
+	return (int)(c - 48);
 }
 
+// GET VARIABLE ADDRESS
 int get_val_addr(char c){
 	if (isupper(c)){
 		if (val_table[c-'A'] < 0){
@@ -232,6 +202,8 @@ int get_val_addr(char c){
 	else
 		return -1;
 }
+
+// GET CONSTANT ADDRESS
 int get_const_addr(int n){
 	int i;
 	for(i = 0; i < 100; i++){
@@ -241,6 +213,7 @@ int get_const_addr(int n){
 	return -1;
 }
 
+// ADD CONSTANT
 int add_const(int n){
 	if(memory[val_pos].command != 0){
 		printf("Out of memory1\n");
@@ -252,6 +225,7 @@ int add_const(int n){
 	return val_pos+1;
 }
 
+// ADD CODE JUMP FORWARD
 void add_code_jump(int command, int operand, int lab){
 	if(memory[code_pos].command != 0){
 		printf("Out of memory2\n");
@@ -263,6 +237,7 @@ void add_code_jump(int command, int operand, int lab){
 	code_pos++;
 }
 
+// ADD CODE
 void add_code(int command, int operand){
 	if(memory[code_pos].command != 0){
 		printf("Out of memory3\n");
@@ -274,6 +249,7 @@ void add_code(int command, int operand){
 	code_pos++;
 }
 
+// GET STACK ADDRESS
 int get_stack_addr(int n){
 	if(memory[code_pos].command != 0){
 		printf("Out of memory4\n");
@@ -287,6 +263,8 @@ int get_stack_addr(int n){
 	}
 	return stack_addr[n];
 }
+
+// PUSH TO STACK
 struct stack_t *stack_push(struct stack_t *head, char a){
 	struct stack_t *ptr;
 
@@ -299,6 +277,7 @@ struct stack_t *stack_push(struct stack_t *head, char a){
 	return ptr;
 }
 
+// POP FROM STACK
 char stack_pop(struct stack_t **head){
 	struct stack_t  *ptr;
 	char a;
@@ -312,6 +291,7 @@ char stack_pop(struct stack_t **head){
     return a;
 }
 
+// GET OPERATION PRIORITY
 int get_prior(char c){
     switch(c)
     {
@@ -330,6 +310,7 @@ int get_prior(char c){
    /)/)
 =( '.' )=
 */
+// EXPRESSION TO STACK
 void translate_to_stack(char *outstr, char *a){
 	struct stack_t *opers = NULL;
 	int k, point;
@@ -364,6 +345,7 @@ void translate_to_stack(char *outstr, char *a){
 		outstr[point++] = stack_pop(&opers);
 	outstr[point] = '\0';
 }
+
 void stack_pars(char *stac, int val){
 	int i = 0;
 	int depth = 0;
@@ -464,7 +446,7 @@ int parse_line(char *str, int key_w){
 				
 				addr = find_label(label);
 				if (addr < 0){
-					add_code_jump(40, 1, label);
+					add_code_jump(40, 1, label);// JUMP forward
 				}else
 					add_code(40, addr); // JUMP
 			}
@@ -564,7 +546,7 @@ int parse_line(char *str, int key_w){
 					printf("Uncorrect LET statement1!\n");
 					exit(1);
 				}
-				translate_to_stack(stac, ptr);
+				translate_to_stack(stac, ptr);//TO STACK AND BACK
 				stack_pars(stac, val);
 				break;
 	}

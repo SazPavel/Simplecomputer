@@ -13,8 +13,10 @@
 #include "mybigchar.h"
 #include "myreadkey.h"
 #include "simpleasm.h"
+
 //SIMPLE ASSEMBLER TRANSLATOR
-int test_argv(char *argv[]){//Проверяет что аргументы правильны
+
+int test_argv(char *argv[]){//verify input and output files
 	char *ptr1, *ptr2;
 	
 	ptr1 = strrchr(argv[1], '.');
@@ -25,7 +27,7 @@ int test_argv(char *argv[]){//Проверяет что аргументы правильны
 		return 0;
 }
 
-int str_command(char *str){
+int str_command(char *str){//command code
 	if (strcmp(str, "READ") == 0)
 		return 0x10;
 	if (strcmp(str, "WRITE") == 0)
@@ -58,7 +60,7 @@ int str_command(char *str){
 	
 }
 
-int str_sc_word(char *str, int *value){
+int str_sc_word(char *str, int *value){//record numbers
 	int pos = 0, plus = 1;
 	int n;
 

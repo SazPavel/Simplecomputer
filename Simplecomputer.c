@@ -20,10 +20,10 @@
 32767 - 0111 1111 1111 1111
 */
 
-int position_cursor = 0;
+int position_cursor = 0;// cursor position
 char error_str[256];
 
-struct itimerval nval, oval; //timer
+struct itimerval nval, oval; // global vars for timer
 
 
 void printGUI(){
@@ -35,6 +35,7 @@ void printGUI(){
     mt_setbgcolor(C_BLACK); 
 
 
+	//boxes
 	bc_box(1, 1, 12, 62);
 	bc_box(13, 1, 22, 44);
 	bc_box(13, 46, 22, 83);
@@ -44,6 +45,7 @@ void printGUI(){
 	bc_box(10, 63, 12, 83); 
 
 	
+	//labels
 	mt_gotoXY(30, 1);	
 	printf(" Memory ");
 	mt_gotoXY(66, 1);
@@ -65,6 +67,7 @@ void printGUI(){
 	mt_gotoXY(70, 5);	
 	printf("%04X",  INCOUNTER);
 	
+	//operation 
 	mt_gotoXY(68, 8);
 	int com, c, o;
 	com = sc_commandDecode(RAM[position_cursor], &c, &o);
@@ -74,6 +77,7 @@ void printGUI(){
 	else
 		printf("%02X%02X", c, o);
 	
+	//flags
 	mt_gotoXY(68, 11);
 	int i;
 	sc_regGet(FIRST, &i);
@@ -127,6 +131,7 @@ void printGUI(){
         printf(" ");
     }
 
+    // BIG RAM ELEMENT
     int arr[5][2];
     arr[0][0] = PLUS_BEGIN;
     arr[0][1] = PLUS_END;
@@ -473,7 +478,7 @@ int main(int argc, char **argv)
     sc_regSet(FOURTH, 1);
 
     enum keys ch = 0;    
-    setbuf(stdout, NULL); 
+    setbuf(stdout, NULL); //DARK MAGIC
     char fname[256];
     int all = 0, clock_puls = -1;
 
@@ -497,7 +502,7 @@ int main(int argc, char **argv)
         sc_regGet(FOURTH, &clock_puls);
 
 
-        if (clock_puls) {
+        if (clock_puls) {//If reads keystrokes
             setitimer(ITIMER_REAL, NULL, NULL);
             switch(ch) {
                 case K_F5: { //ACCUMULATOR
